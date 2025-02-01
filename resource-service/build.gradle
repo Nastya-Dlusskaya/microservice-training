@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group = 'com.microservice'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
+}
+
+dependencies {
+    implementation(platform("org.apache.tika:tika-bom:2.9.2"))
+    implementation("org.apache.tika:tika-parsers-standard-package")
+    implementation("org.apache.tika:tika-core")
+
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+    useJUnitPlatform()
+}
