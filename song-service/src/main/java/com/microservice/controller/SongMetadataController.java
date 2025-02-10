@@ -1,9 +1,12 @@
 package com.microservice.controller;
 
-import com.microservice.model.SongMetadata;
+import com.microservice.exception.DuplicationException;
+import com.microservice.model.SongMetadataDTO;
 import com.microservice.service.SongMetadataService;
+import com.microservice.util.IdsValidator;
+import jakarta.validation.Valid;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/songs")
@@ -23,29 +27,21 @@ public class SongMetadataController {
     @Autowired
     private SongMetadataService songMetadataService;
 
-    @PostMapping
-    public ResponseEntity<SongMetadata> createSong(@RequestBody SongMetadata song)  {
-        SongMetadata song1 = songMetadataService.createSongMetadata(song);
-        return ResponseEntity.ok(song1);
+    @PostMapping(consumes = "application/json", produces = "application/json")
+    public ResponseEntity<Map<String, String>> createSongMetadata(@RequestBody @Valid SongMetadataDTO songMetadata) throws DuplicationException {
+        SongMetadataDTO savedSongMetadata = songMetadataService.createSongMetadata(songMetadata);
+        return ResponseEntity.ok(Map.of("id", savedSongMetadata.getId().toString()));
     }
 
-    @GetMapping
-    private ResponseEntity<SongMetadata> getSongMetadataBySongId(@Param("songId") Long songId) {
-        return ResponseEntity.ok(songMetadataService.getSongMetadataBySongId(songId));
-    }
-
-    @GetMapping("/{id}")
-    private ResponseEntity<SongMetadata> getSongMetadata(@PathVariable Long id) {
+    @GetMapping(value = "/{id}", produces = "application/json")
+    private ResponseEntity<SongMetadataDTO> getSongMetadata(@PathVariable Long id) {
         return ResponseEntity.ok(songMetadataService.getSongMetadata(id));
     }
 
-    @DeleteMapping
-    public ResponseEntity<List<Long>> deleteResource(@RequestParam(name = "id") Long[] id) {
-        return ResponseEntity.ok(songMetadataService.deleteSongMetadata(id));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Long> deleteResource(@PathVariable Long id) {
-        return ResponseEntity.ok(songMetadataService.deleteSongMetadata(id));
+    @DeleteMapping(produces = "application/json")
+    public ResponseEntity<Map<String, List<String>>> deleteResource(@RequestParam(name = "ids") String ids) throws BadRequestException {
+        IdsValidator.validate(ids);
+        List<String> songMetadataIds = songMetadataService.deleteSongMetadata(ids).stream().map(Object::toString).toList();
+        return ResponseEntity.ok(Map.of("ids", songMetadataIds));
     }
 }

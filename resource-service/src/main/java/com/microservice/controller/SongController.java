@@ -1,7 +1,8 @@
 package com.microservice.controller;
 
-import com.microservice.model.Song;
 import com.microservice.service.SongService;
+import com.microservice.util.IdValidator;
+import org.apache.coyote.BadRequestException;
 import org.apache.tika.exception.TikaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/resources")
@@ -25,18 +27,20 @@ public class SongController {
     @Autowired
     private SongService songService;
 
-    @PostMapping(consumes = "audio/mpeg")
-    public ResponseEntity<Song> createSong(@RequestBody byte[] song) throws TikaException, IOException, SAXException {
-        return ResponseEntity.ok(songService.createSong(song));
+    @PostMapping(consumes = "audio/mpeg", produces = "application/json")
+    public ResponseEntity<Map<String, String>> createSong(@RequestBody byte[] song) throws TikaException, IOException, SAXException {
+        return ResponseEntity.ok(Map.of("id",songService.createSong(song).getId().toString()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Song> getSong(@PathVariable Long id) {
-        return ResponseEntity.ok(songService.getSong(id));
+    @GetMapping(value = "/{id}", produces = "audio/mpeg")
+    public ResponseEntity<byte[]> getSong(@PathVariable Long id) throws BadRequestException {
+        IdValidator.validateId(id);
+        return ResponseEntity.ok(songService.getSong(id).getData());
     }
 
-    @DeleteMapping
-    public ResponseEntity<List<Long>> deleteSong(@RequestParam(name = "id") Long[] id) {
-        return ResponseEntity.ok(songService.deleteAllSong(id));
+    @DeleteMapping(produces = "application/json")
+    public ResponseEntity<Map<String, List<Long>>> deleteSong(@RequestParam(name = "id") String id) throws BadRequestException {
+        IdValidator.validateCsv(id);
+        return ResponseEntity.ok(Map.of("ids", songService.deleteAllSong(id)));
     }
 }

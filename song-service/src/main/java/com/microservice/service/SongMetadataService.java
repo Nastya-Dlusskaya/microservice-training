@@ -1,41 +1,49 @@
 package com.microservice.service;
 
-import com.microservice.model.SongMetadata;
+import com.microservice.exception.DuplicationException;
+import com.microservice.util.mapper.SongMetadataMapper;
+import com.microservice.model.SongMetadataDTO;
 import com.microservice.repository.SongMetadataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class SongMetadataService {
 
     @Autowired
+    private SongMetadataMapper mapper;
+
+    @Autowired
     private SongMetadataRepository songMetadataRepository;
 
-    public SongMetadata createSongMetadata(SongMetadata song) {
-        return songMetadataRepository.save(song);
+    public SongMetadataDTO createSongMetadata(SongMetadataDTO song) throws DuplicationException {
+        if (songMetadataRepository.existsById(song.getId())) {
+            throw new DuplicationException("Song metadata already exists");
+        }
+        return mapper.toDto(songMetadataRepository.save(mapper.toEntity(song)));
     }
 
-    public SongMetadata getSongMetadataBySongId(Long songId) {
-        return songMetadataRepository.findBySongId(songId);
+    public SongMetadataDTO getSongMetadata(Long id) throws NoSuchElementException {
+        return mapper.toDto(songMetadataRepository.findBySongId(id).orElseThrow(() -> new NoSuchElementException("Song metadata not found")));
     }
 
-    public SongMetadata getSongMetadata(Long id) {
-        return songMetadataRepository.findById(id).orElse(null);
+    @Transactional
+    public List<Long> deleteSongMetadata(String ids) {
+        String[] split = ids.split(",");
+        return Arrays.stream(split).map(Long::parseLong).map(this::deleteSongMetadata).filter(Objects::nonNull).toList();
     }
 
-    public List<Long> deleteSongMetadata(Long[] ids) {
-        List<Long> longStream = Arrays.stream(ids).filter(id -> songMetadataRepository.existsBySongId(id)).toList();
-        longStream.forEach(songMetadataRepository::deleteBySongId);
-        return longStream;
-    }
-
+    @Transactional
     public Long deleteSongMetadata(Long id) {
-        songMetadataRepository.deleteBySongId(id);
-        return id;
+        if (!songMetadataRepository.existsBySongId(id)) {
+            return null;
+        }
+        return songMetadataRepository.deleteBySongId(id);
     }
 }

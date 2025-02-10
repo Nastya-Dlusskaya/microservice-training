@@ -19,6 +19,12 @@ public class SongMetadataMapper {
     }
 
     private String getDuration(String duration) {
-        return Double.parseDouble(duration) / 60000 + ":" + Double.parseDouble(duration) % 60000 / 1000;
+        String[] durationParts = duration.split("\\.");
+        long seconds = Long.parseLong(durationParts[0]);
+        return addZero(seconds / 60) + ":" + addZero(seconds % 60).substring(0, 2);
+    }
+
+    private String addZero(long seconds) {
+        return seconds < 10 ? "0" + seconds : String.valueOf(seconds);
     }
 }

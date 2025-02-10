@@ -5,23 +5,15 @@ import com.microservice.model.Song;
 import com.microservice.model.SongMetadata;
 import com.microservice.repository.SongRepository;
 import org.apache.tika.exception.TikaException;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.mp3.Mp3Parser;
-import org.apache.tika.sax.BodyContentHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 public class SongService {
@@ -34,8 +26,8 @@ public class SongService {
     @Autowired
     private SongMetadataExtractor songMetadataExtractor;
 
-    public Song getSong(Long id) {
-        return songRepository.findById(id).orElse(null);
+    public Song getSong(Long id) throws NoSuchElementException {
+        return songRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Song not found"));
     }
 
     @Transactional
@@ -43,7 +35,6 @@ public class SongService {
         Song saved = songRepository.save(new Song(song));
 
         SongMetadata songMetadata = songMetadataExtractor.getSongMetadata(song, saved.getId());
-        songMetadata.setSongId(saved.getId());
 
         songMetadataClient.createSongMetadata(songMetadata);
 
@@ -51,8 +42,11 @@ public class SongService {
     }
 
     @Transactional
-    public List<Long> deleteAllSong(Long[] ids) {
-        List<Long> list = Arrays.stream(ids).filter(id -> songRepository.existsById(id)).toList();
+    public List<Long> deleteAllSong(String ids) {
+        List<Long> list = Arrays.stream(ids.split(","))
+                .map(Long::parseLong)
+                .filter(id -> songRepository.existsById(id))
+                .toList();
 
         list.forEach(id -> {
             songRepository.deleteById(id);
