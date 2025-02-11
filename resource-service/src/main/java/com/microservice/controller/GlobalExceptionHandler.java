@@ -6,6 +6,7 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.ErrorResponse;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -17,6 +18,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<ExceptionResponse> handleBadRequestException(BadRequestException ex) {
         return createErrorResponse(ex.getMessage(), "400", HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ExceptionResponse> handleUnsupportedMediaType(HttpMediaTypeNotSupportedException ex) {
+        return createErrorResponse("Unsupported media type. Received Content-Type: "
+                + (ex.getContentType() != null ? ex.getContentType().toString() : "undefined")
+                + ". Accepted format: 'audio/mpeg'", "400", HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ChangeSetPersister.NotFoundException.class)

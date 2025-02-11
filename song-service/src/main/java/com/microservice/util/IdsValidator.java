@@ -15,7 +15,7 @@ public class IdsValidator {
         String[] split = ids.split(",");
         for (String id : split) {
             if (!id.matches("\\d+")) {
-                throw new IllegalArgumentException("Invalid id: " + id);
+                throw new BadRequestException("Invalid id: " + id);
             }
         }
     }

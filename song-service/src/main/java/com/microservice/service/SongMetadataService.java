@@ -23,7 +23,7 @@ public class SongMetadataService {
     private SongMetadataRepository songMetadataRepository;
 
     public SongMetadataDTO createSongMetadata(SongMetadataDTO song) throws DuplicationException {
-        if (song.getId() != null && songMetadataRepository.existsById(song.getId())) {
+        if (song.getId() != null && songMetadataRepository.existsBySongId(song.getId())) {
             throw new DuplicationException("Song metadata already exists");
         }
         return mapper.toDto(songMetadataRepository.save(mapper.toEntity(song)));

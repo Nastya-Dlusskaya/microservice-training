@@ -11,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -26,10 +27,10 @@ public class SongMetadataClient {
         return restTemplate.postForEntity(url, requestEntity, SongMetadata.class).getBody();
     }
 
-    public Map<String, String> deleteSongMetadata(Long id) {
+    public Map<String, List<String>> deleteSongMetadata(Long id) {
         HttpEntity<Long> requestEntity = new HttpEntity<>(null);
-        URI uri = UriComponentsBuilder.fromUriString(url).queryParam("ids", id.toString()).build().toUri();
+        URI uri = UriComponentsBuilder.fromUriString(url).queryParam("id", id.toString()).build().toUri();
 
-        return restTemplate.exchange(uri, HttpMethod.DELETE, requestEntity, new ParameterizedTypeReference<Map<String, String>>() {}).getBody();
+        return restTemplate.exchange(uri, HttpMethod.DELETE, requestEntity, new ParameterizedTypeReference<Map<String, List<String>>>() {}).getBody();
     }
 }

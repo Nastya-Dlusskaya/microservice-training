@@ -39,7 +39,7 @@ public class SongMetadataController {
     }
 
     @DeleteMapping(produces = "application/json")
-    public ResponseEntity<Map<String, List<String>>> deleteResource(@RequestParam(name = "ids") String ids) throws BadRequestException {
+    public ResponseEntity<Map<String, List<String>>> deleteResource(@RequestParam(name = "id") String ids) throws BadRequestException {
         IdsValidator.validate(ids);
         List<String> songMetadataIds = songMetadataService.deleteSongMetadata(ids).stream().map(Object::toString).toList();
         return ResponseEntity.ok(Map.of("ids", songMetadataIds));

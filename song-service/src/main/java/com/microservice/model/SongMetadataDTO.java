@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Size;
 
 public class SongMetadataDTO {
     private Long id;
-    @NotNull(message = "Song ID is mandatory")
     private Long songId;
     @NotBlank(message = "Name is mandatory")
     @Size(min = 1, max = 100, message = "Name must be between 1 and 100 characters")
