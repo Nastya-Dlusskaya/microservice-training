@@ -29,7 +29,7 @@ public class SongController {
 
     @PostMapping(consumes = "audio/mpeg", produces = "application/json")
     public ResponseEntity<Map<String, String>> createSong(@RequestBody byte[] song) throws TikaException, IOException, SAXException {
-        return ResponseEntity.ok(Map.of("id",songService.createSong(song).getId().toString()));
+        return ResponseEntity.ok(Map.of("id", songService.createSong(song).getId().toString()));
     }
 
     @GetMapping(value = "/{id}", produces = "audio/mpeg")

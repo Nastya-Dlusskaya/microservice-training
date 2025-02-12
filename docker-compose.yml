@@ -1,25 +1,21 @@
 version: '3.9'
 services:
-  postgres-resource:
+  postgres-resource-service-db:
     image: postgres:16
     container_name: postgres-resource
     environment:
-      POSTGRES_DB: resource
+      POSTGRES_DB: resource_service_db
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
       - "5432:5432"
-    volumes:
-      - /var/lib/postgresql/data
 
-  postgres-metadata:
+  postgres-song-service-db:
     image: postgres:16
     container_name: postgres-metadata
     environment:
-      POSTGRES_DB: metadata
+      POSTGRES_DB: song_service_db
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
     ports:
       - "5433:5432"
-    volumes:
-      - /var/lib/postgresql/data

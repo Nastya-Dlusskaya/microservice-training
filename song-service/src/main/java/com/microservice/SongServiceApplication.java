@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SongMain {
+public class SongServiceApplication {
     public static void main(String[] args) {
-        SpringApplication.run(SongMain.class, args);
+        SpringApplication.run(SongServiceApplication.class, args);
     }
 }
