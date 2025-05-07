@@ -1,21 +1,39 @@
 version: '3.9'
 services:
+  resource-service:
+    build: "./resource-service"
+    depends_on:
+      - postgres-resource-service-db
+    ports:
+      - "8080:8080"
+
+  song-service:
+    build: "./song-service"
+    depends_on:
+      - postgres-song-service-db
+    ports:
+      - "8090:8090"
+
   postgres-resource-service-db:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: postgres-resource
     environment:
-      POSTGRES_DB: resource_service_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB_RESOURCE_SERVICE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
+    volumes:
+      - ./init-scripts/resource-db/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   postgres-song-service-db:
-    image: postgres:16
-    container_name: postgres-metadata
+    image: postgres:16-alpine
+    container_name: postgres-song
     environment:
-      POSTGRES_DB: song_service_db
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB_SONG_SERVICE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
+    volumes:
+      - ./init-scripts/song-db/init.sql:/docker-entrypoint-initdb.d/init.sql
