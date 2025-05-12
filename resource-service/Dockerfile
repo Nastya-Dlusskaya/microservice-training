@@ -8,7 +8,7 @@ COPY src ./src
 RUN gradle assemble --build-cache --no-daemon -x test
 
 # Runtime stage
-FROM eclipse-temurin:17
+FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 EXPOSE 8080

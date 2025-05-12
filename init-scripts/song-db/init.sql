@@ -1,8 +1,9 @@
-drop table if exists song;
+drop table if exists song_metadata;
 
 create table song_metadata
 (
-    id       bigint not null primary key,
+    id       serial not null primary key,
+    song_id  bigint,
     name     text,
     artist   text,
     album    text,

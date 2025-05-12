@@ -1,7 +1,7 @@
-drop table if exists resource;
+drop table if exists files;
 
 create table files
 (
-    id      bigint not null primary key,
-    payload bytea
+    id      serial not null primary key,
+    data    bytea
 );
