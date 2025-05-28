@@ -1,8 +1,8 @@
 package com.microservice.controller;
 
+import com.microservice.exception.BadRequestException;
 import com.microservice.service.SongService;
 import com.microservice.util.IdValidator;
-import org.apache.coyote.BadRequestException;
 import org.apache.tika.exception.TikaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

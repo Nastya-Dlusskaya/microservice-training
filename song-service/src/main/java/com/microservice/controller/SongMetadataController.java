@@ -1,11 +1,11 @@
 package com.microservice.controller;
 
+import com.microservice.exception.BadRequestException;
 import com.microservice.exception.DuplicationException;
 import com.microservice.model.SongMetadataDTO;
 import com.microservice.service.SongMetadataService;
 import com.microservice.util.IdsValidator;
 import jakarta.validation.Valid;
-import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;

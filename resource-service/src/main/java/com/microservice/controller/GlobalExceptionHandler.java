@@ -1,7 +1,7 @@
 package com.microservice.controller;
 
+import com.microservice.exception.BadRequestException;
 import com.microservice.exception.ExceptionResponse;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

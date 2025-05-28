@@ -1,10 +1,19 @@
 version: '3.9'
 services:
+  discovery-service:
+    build: './discovery-service'
+    ports:
+      - '8761:8761'
+    environment:
+      SERVER_PORT: ${DISCOVERY_SERVICE_SERVER_PORT}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: ${DISCOVERY_SERVICE_URL}
+
   resource-service:
     build: "./resource-service"
     depends_on:
       - postgres-resource-service-db
       - song-service
+      - discovery-service
     ports:
       - "8080:8080"
     environment:
@@ -12,17 +21,23 @@ services:
       SPRING_DATASOURCE_USER: ${RESOURCE_POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${RESOURCE_POSTGRES_PASSWORD}
       SONG_URL: ${RESOURCE_SERVICE_SONG_URL}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: ${DISCOVERY_SERVICE_URL}
 
   song-service:
     build: "./song-service"
     depends_on:
       - postgres-song-service-db
+      - discovery-service
     ports:
-      - "8070:8070"
+      - "8082-8083:8082"
+    deploy:
+      replicas: 2
     environment:
       SPRING_DATASOURCE_URL: ${SONG_SERVICE_DATASOURCE_URL}
       SPRING_DATASOURCE_USER: ${SONG_POSTGRES_USER}
       SPRING_DATASOURCE_PASSWORD: ${SONG_POSTGRES_PASSWORD}
+      SERVER_PORT: ${SONG_SERVER_PORT}
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: ${DISCOVERY_SERVICE_URL}
 
   postgres-resource-service-db:
     image: postgres:16-alpine

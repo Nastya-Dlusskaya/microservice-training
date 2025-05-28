@@ -1,0 +1,20 @@
+plugins {
+    id 'org.springframework.boot' version '3.4.3'
+    id 'java'
+}
+
+group = 'com.microservice'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << '-parameters'
+}
+
+dependencies {
+    implementation('org.springframework.boot:spring-boot-starter-web:3.4.3')
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:4.2.0')
+}

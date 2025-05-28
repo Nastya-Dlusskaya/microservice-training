@@ -1,6 +1,6 @@
 package com.microservice.util;
 
-import org.apache.coyote.BadRequestException;
+import com.microservice.exception.BadRequestException;
 
 public class IdsValidator {
 
