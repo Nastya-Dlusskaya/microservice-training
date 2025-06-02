@@ -24,5 +24,6 @@ dependencies {
     implementation('org.postgresql:postgresql:42.6.0')
     implementation('org.mapstruct:mapstruct:1.6.2')
     implementation('org.springframework.cloud:spring-cloud-starter-loadbalancer:4.2.0')
+    implementation('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.2.0')
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.2'
 }

@@ -24,12 +24,12 @@ public class SongMetadataClient {
 
     public SongMetadata createSongMetadata(SongMetadata songMetadata) {
         HttpEntity<SongMetadata> requestEntity = new HttpEntity<>(songMetadata);
-        return restTemplate.postForEntity(url, requestEntity, SongMetadata.class).getBody();
+        return restTemplate.postForEntity(url + "/songs", requestEntity, SongMetadata.class).getBody();
     }
 
     public Map<String, List<String>> deleteSongMetadata(Long id) {
         HttpEntity<Long> requestEntity = new HttpEntity<>(null);
-        URI uri = UriComponentsBuilder.fromUriString(url).queryParam("id", id.toString()).build().toUri();
+        URI uri = UriComponentsBuilder.fromUriString(url + "/songs").queryParam("id", id.toString()).build().toUri();
 
         return restTemplate.exchange(uri, HttpMethod.DELETE, requestEntity, new ParameterizedTypeReference<Map<String, List<String>>>() {}).getBody();
     }

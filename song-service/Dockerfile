@@ -11,5 +11,5 @@ RUN gradle assemble --no-daemon --build-cache -x test
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
-EXPOSE 8070
+EXPOSE 8082
 CMD ["java", "-jar", "app.jar"]
