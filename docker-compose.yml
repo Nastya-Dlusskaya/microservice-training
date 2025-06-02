@@ -12,7 +12,6 @@ services:
     build: "./resource-service"
     depends_on:
       - postgres-resource-service-db
-      - song-service
       - discovery-service
     ports:
       - "8080:8080"
